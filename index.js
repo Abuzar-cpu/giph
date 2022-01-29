@@ -35,6 +35,8 @@ let getGiph = (element) =>
             let vid = giph.images.fixed_width.url;
             $("#giphs").append("<img onclick='playPause(this)' data-playing='false' src='" + vid + "'/>");
         }
+
+        $("#searched").text("You've searched for: " + "'" + searchTerm + "'");
     }).catch("Error occured");
 }
 
