@@ -1,11 +1,16 @@
+$("#limit-container").hide();
+
 $("#add-button").on("click", () =>{
-    if($(".form-control").val() != '')
+    if($("#searchTerm").val() != '')
     {
-        let button = $("<button onclick='getGiph(this)' type='button' class='getGiph ms-3 mt-3 btn btn-primary'>" + $(".form-control").val() + "</button>");
+        let button = $("<button onclick='getGiph(this)' type='button' class='getGiph ms-3 mt-3 btn btn-primary'>" + $("#searchTerm").val() + "</button>");
 
         $("#buttons").append(button);
-        $(".form-control").val("");
+        $("#searchTerm").val("");
+
     }
+
+    $("#limit-container").show();
 });
 
 let getGiph = (element) =>
@@ -15,7 +20,14 @@ let getGiph = (element) =>
 
     let responseData;
     let searchTerm = element.innerText.toLowerCase();
-    fetch("https://api.giphy.com/v1/gifs/search?api_key=NA37wZ2PZFORU0z90xzFHt4xpYCtT5e6&q="+searchTerm+"&limit=5&offset=0&rating=g&lang=en").then(result => result.json()).then(response => {
+    let range = $("#limit").val();
+    
+    if(range <= 0)
+    {
+        alert("Range is not valid");
+        return;
+    }
+    fetch("https://api.giphy.com/v1/gifs/search?api_key=NA37wZ2PZFORU0z90xzFHt4xpYCtT5e6&q="+searchTerm+"&limit="+range+"&offset=0&rating=g&lang=en").then(result => result.json()).then(response => {
         responseData = response.data;
 
         for(const giph of responseData)
