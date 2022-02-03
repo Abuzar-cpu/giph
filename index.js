@@ -1,4 +1,5 @@
-$("#limit-container").hide();
+$("#limit-container").show();
+$("#limit-container").val(15);
 
 $("#add-button").on("click", () =>{
     if($("#searchTerm").val() != '')
@@ -9,8 +10,6 @@ $("#add-button").on("click", () =>{
         $("#searchTerm").val("");
 
     }
-
-    $("#limit-container").show();
 });
 
 let getGiph = (element) =>
@@ -36,7 +35,7 @@ let getGiph = (element) =>
             $("#giphs").append("<img onclick='playPause(this)' data-playing='false' src='" + vid + "'/>");
         }
 
-        $("#searched").text("You've searched for: " + "'" + searchTerm + "'");
+        $("#searched").text("You've searched for: " + element.innerText);
     }).catch("Error occured");
 }
 
