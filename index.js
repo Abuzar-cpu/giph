@@ -1,13 +1,32 @@
+//@ts-check
+
+import {set, ref, onValue, push, remove, db} from "./firebase.js";
+
+onValue(ref(db, "/giphButtons"), snapshot => {
+    let buttons = Object.values(snapshot.val());
+    // console.log(buttons);
+
+    buttons.map(button => {
+        // <button onclick='getGiph(this)' type='button' class='getGiph ms-3 mt-3 btn btn-primary'>Cat</button>
+        $("#buttons").append($("<button onclick='getGiph(this)' type='button' class='getGiph ms-3 mt-3 btn btn-primary'>"+button.text+"</button>"));
+    })
+})
+
 $("#limit-container").show();
 $("#limit-container").val(15);
 
 $("#add-button").on("click", () =>{
-    if($("#searchTerm").val() != '')
+    if($("#searchTerm").val().trim() != '')
     {
         let button = $("<button onclick='getGiph(this)' type='button' class='getGiph ms-3 mt-3 btn btn-primary'>" + $("#searchTerm").val() + "</button>");
 
-        $("#buttons").append(button);
+        let buttonPush = push(ref(db, "/giphButtons"));
+        set(buttonPush, {
+            text: $("#searchTerm").val().trim()
+        });
+
         $("#searchTerm").val("");
+
 
     }
 });
@@ -31,25 +50,32 @@ let getGiph = (element) =>
 
         for(const giph of responseData)
         {
-            let vid = giph.images.fixed_width.url;
-            $("#giphs").append("<img onclick='playPause(this)' data-playing='false' src='" + vid + "'/>");
+            // console.log(giph);
+            let pic = giph.images.fixed_width_still.url;
+            $("#giphs").append("<img onclick='playPause(this)' data-vid='"+giph.images.fixed_width.url+"' data-pic='"+giph.images.fixed_width_still.url+"' data-playing='false' src='" + pic + "'/>");
         }
 
         $("#searched").text("You've searched for: " + element.innerText);
-    }).catch("Error occured");
+    }).catch();
 }
 
-let playPause = (element, still, vid) =>
+let playPause = (element) =>
 {
     if($(element).data("playing") == "false")
     {
         $(element).data("playing","true");
-        return;
+        $(element).attr("src", $(element).data("vid"))
     }
 
     else{
         $(element).data("playing", "false");
-        return;
+        $(element).attr("src", $(element).data("pic"))
     }
     return;
 }
+
+//@ts-ignore
+window.getGiph = getGiph;
+
+//@ts-ignore
+window.playPause = playPause;
